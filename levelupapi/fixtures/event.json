@@ -1,0 +1,27 @@
+[
+    {
+        "model": "levelupapi.event",
+        "pk": "1",
+        "fields": {
+            "game": "1",
+            "description": "Board Game",
+            "date": "2022-02-05",
+            "time": "6:00",
+            "organizer": "1",
+            "attendees": "1"
+        }
+    },
+    {
+        "model": "levelupapi.event",
+        "pk": "2",
+        "fields": {
+            "game": "1",
+            "description": "Board Games",
+            "date": "2022-02-05",
+            "time": "6:00",
+            "organizer": "1",
+            "attendees": "1"
+        }
+    }
+]
+

@@ -1,0 +1,38 @@
+[
+    {
+        "model": "levelupapi.game",
+        "pk": 1,
+        "fields": {
+            "game_type": 1,
+            "title": "Risk",
+            "maker": "Test",
+            "gamer": "1",
+            "number_of_players": 4,
+            "skill_level": 5
+        }
+    },
+    {
+        "model": "levelupapi.game",
+        "pk": 2,
+        "fields": {
+            "game_type": 2,
+            "title": "D&D",
+            "maker": "Wizards of the Coast",
+            "gamer": "1",
+            "number_of_players": 4,
+            "skill_level": 8
+        }
+    },
+    {
+        "model": "levelupapi.game",
+        "pk": 3,
+        "fields": {
+            "game_type": 3,
+            "title": "World of Warcraft",
+            "maker": "Blizzard",
+            "gamer": "1",
+            "number_of_players": 10,
+            "skill_level": 8
+        }
+    }
+]
