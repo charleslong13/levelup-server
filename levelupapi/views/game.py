@@ -91,7 +91,7 @@ class Games(ViewSet):
         # server is not sending back any data in the response
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
-    def destroy(self, request, pk=None):
+    def destroy(self, request, pk):
         """Handle DELETE requests for a single game
 
         Returns:
@@ -101,7 +101,7 @@ class Games(ViewSet):
             game = Game.objects.get(pk=pk)
             game.delete()
 
-            return Response({}, status=status.HTTP_204_NO_CONTENT)
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
 
         except Game.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
