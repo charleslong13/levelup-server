@@ -5,7 +5,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
 from levelupapi.models import Event, Game, Gamer, GameType
-
+from rest_framework.decorators import action
 
 class EventView(ViewSet):
     """Level up game types view"""
@@ -83,22 +83,48 @@ class EventView(ViewSet):
         """
         events = Event.objects.all()
         game = request.query_params.get('game', None)
-
+        gamer = Gamer.objects.get(user=request.auth.user)
         if game:
             events = events.filter(game_id=game)
+        # Set the `joined` property on every event
+        for event in events:
+    # Check to see if the gamer is in the attendees list on the event
+            event.joined = gamer in event.attendees.all()
+
+               
         serializer = EventSerializer(events, many=True)
         return Response(serializer.data)
     
     def destroy(self, request, pk):
+        """Delete Request"""
         event = Event.objects.get(pk=pk)
         event.delete()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
-        
+    
+    @action(methods=['post'], detail=True)
+    def signup(self, request, pk):
+        """Post request for a user to sign up for an event"""
+    
+        gamer = Gamer.objects.get(user=request.auth.user)
+        event = Event.objects.get(pk=pk)
+        event.attendees.add(gamer)
+        return Response({'message': 'Gamer added'}, status=status.HTTP_201_CREATED)
+    
+    @action(methods=['delete'], detail=True)
+    def leave(self, request, pk):
+        """Post request for a user to sign up for an event"""
+    
+        gamer = Gamer.objects.get(user=request.auth.user)
+        event = Event.objects.get(pk=pk)
+        event.attendees.remove(gamer)
+        return Response({'message': 'Gamer removed'}, status=status.HTTP_204_NO_CONTENT)
 
 class EventSerializer(serializers.ModelSerializer):
     """JSON serializer for game types
     """
     class Meta:
         model = Event
-        fields = "__all__"
-        depth = 1
+        fields = ('id', 'game', 'organizer',
+          'description', 'date', 'time', 'attendees',
+          'joined')
+        depth = 3

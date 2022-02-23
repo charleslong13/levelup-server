@@ -4,11 +4,12 @@ from rest_framework import status
 from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
-from rest_framework import serializers
+from rest_framework import serializers, status
 from levelupapi.models import Game, GameType, Gamer
 
 
-class Games(ViewSet):
+
+class GameView(ViewSet):
     """Level up games"""
 
     def create(self, request):
@@ -39,7 +40,7 @@ class Games(ViewSet):
         try:
             game.save()
             serializer = GameSerializer(game)
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         # If anything went wrong, catch the exception and
         # send a response with a 400 status code to tell the
@@ -62,8 +63,11 @@ class Games(ViewSet):
             game = Game.objects.get(pk=pk)
             serializer = GameSerializer(game, context={'request': request})
             return Response(serializer.data)
+        except Game.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
         except Exception as ex:
             return HttpResponseServerError(ex)
+        
 
     def update(self, request, pk=None):
         """Handle PUT requests for a game
@@ -97,17 +101,13 @@ class Games(ViewSet):
         Returns:
             Response -- 200, 404, or 500 status code
         """
-        try:
-            game = Game.objects.get(pk=pk)
-            game.delete()
+        
+        game = Game.objects.get(pk=pk)
+        game.delete()
 
-            return Response(None, status=status.HTTP_204_NO_CONTENT)
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
 
-        except Game.DoesNotExist as ex:
-            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
-
-        except Exception as ex:
-            return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 
     def list(self, request):
         """Handle GET requests to games resource
@@ -138,5 +138,5 @@ class GameSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Game
-        fields = ('id', 'title', 'maker', 'number_of_players', 'skill_level', 'game_type')
+        fields = "__all__"
         depth = 1
